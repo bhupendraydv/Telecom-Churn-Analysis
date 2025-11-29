@@ -4,7 +4,6 @@ Author: Bhupendra
 Date: 2025
 Description: Comprehensive ML analysis to predict customer churn in telecom industry
 """
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,7 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve, accuracy_score
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -27,10 +26,14 @@ print("="*60)
 
 # Load Dataset
 print("\n1. LOADING DATA...")
-df = pd.read_csv('TelecomCustomerChurn.csv')
-print(f"Dataset Shape: {df.shape}")
-print(f"\nFirst few rows:")
-print(df.head())
+try:
+    df = pd.read_csv('TelecomCustomerChurn.csv')
+    print(f"Dataset Shape: {df.shape}")
+    print(f"\nFirst few rows:")
+    print(df.head())
+except FileNotFoundError:
+    print("ERROR: TelecomCustomerChurn.csv not found!")
+    exit(1)
 
 # Data Overview
 print("\n2. DATA OVERVIEW...")
@@ -53,7 +56,6 @@ df['Churn'] = df['Churn'].map({'Yes': 1, 'No': 0})
 # Encode categorical variables
 label_encoders = {}
 categorical_cols = df.select_dtypes(include=['object']).columns
-
 for col in categorical_cols:
     le = LabelEncoder()
     df[col] = le.fit_transform(df[col])
@@ -65,7 +67,6 @@ print("Categorical variables encoded.")
 print("\n5. FEATURE ENGINEERING...")
 X = df.drop('Churn', axis=1)
 y = df['Churn']
-
 print(f"Features shape: {X.shape}")
 print(f"Target shape: {y.shape}")
 
@@ -86,36 +87,47 @@ print("Features scaled successfully.")
 print("\n8. MODEL TRAINING...")
 
 # Logistic Regression
-print("\n   a) Logistic Regression...")
+print("\n  a) Logistic Regression...")
 lr_model = LogisticRegression(max_iter=1000, random_state=42)
 lr_model.fit(X_train_scaled, y_train)
 lr_pred = lr_model.predict(X_test_scaled)
 lr_score = lr_model.score(X_test_scaled, y_test)
-print(f"   Accuracy: {lr_score:.4f}")
+print(f"  Accuracy: {lr_score:.4f}")
 
 # Random Forest
-print("\n   b) Random Forest Classifier...")
+print("\n  b) Random Forest Classifier...")
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
 rf_model.fit(X_train, y_train)
 rf_pred = rf_model.predict(X_test)
 rf_score = rf_model.score(X_test, y_test)
-print(f"   Accuracy: {rf_score:.4f}")
+print(f"  Accuracy: {rf_score:.4f}")
 
 # Model Evaluation
 print("\n9. MODEL EVALUATION...")
-print("\n   Logistic Regression Report:")
+print("\n  Logistic Regression Report:")
 print(classification_report(y_test, lr_pred, target_names=['No Churn', 'Churn']))
+print(f"\n  Logistic Regression Accuracy: {accuracy_score(y_test, lr_pred):.4f}")
 
-print("\n   Random Forest Report:")
+print("\n  Random Forest Report:")
 print(classification_report(y_test, rf_pred, target_names=['No Churn', 'Churn']))
+print(f"\n  Random Forest Accuracy: {accuracy_score(y_test, rf_pred):.4f}")
 
 # ROC-AUC Score
 lr_auc = roc_auc_score(y_test, lr_model.predict_proba(X_test_scaled)[:, 1])
 rf_auc = roc_auc_score(y_test, rf_model.predict_proba(X_test)[:, 1])
+print(f"\n  ROC-AUC Scores:")
+print(f"  Logistic Regression AUC: {lr_auc:.4f}")
+print(f"  Random Forest AUC: {rf_auc:.4f}")
 
-print(f"\n   ROC-AUC Scores:")
-print(f"   Logistic Regression AUC: {lr_auc:.4f}")
-print(f"   Random Forest AUC: {rf_auc:.4f}")
+# Confusion Matrix
+from sklearn.metrics import confusion_matrix
+lr_cm = confusion_matrix(y_test, lr_pred)
+rf_cm = confusion_matrix(y_test, rf_pred)
+
+print("\n  Confusion Matrix - Logistic Regression:")
+print(lr_cm)
+print("\n  Confusion Matrix - Random Forest:")
+print(rf_cm)
 
 # Feature Importance
 print("\n10. FEATURE IMPORTANCE ANALYSIS...")
