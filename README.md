@@ -169,6 +169,50 @@ jupyter notebook notebooks/analysis_notebook.ipynb
 
 ---
 
+## 🚀 Advanced ML Features (NEW)
+
+### Production-Ready ML Modules
+
+The project has been enhanced with four advanced machine learning modules for enterprise-grade predictions and analysis:
+
+#### 1. **advanced_ml_models.py** - Ensemble Machine Learning
+- **XGBoost Classifier**: Gradient boosting framework for high-performance predictions
+- **LightGBM Classifier**: Fast GBDT implementation optimized for speed and accuracy
+- **Ensemble Voting Classifier**: Combines all models (Logistic Regression, Random Forest, XGBoost, LightGBM)
+- Cross-validation and model evaluation metrics
+- Serialization support for production deployment
+
+#### 2. **customer_risk_analyzer.py** - Risk Scoring & Segmentation
+- **Individual Risk Scoring**: 0-100 scale churn probability
+- **Batch Scoring**: Process entire customer base efficiently
+- **Automatic Segmentation**:
+  - HIGH RISK (80-100): Immediate retention intervention
+  - MEDIUM RISK (40-79): Monitor and preventive measures
+  - LOW RISK (0-39): Maintain satisfaction
+- Personalized retention recommendations per customer
+
+#### 3. **report_generator.py** - Automated Reporting
+- Executive summary with key metrics and insights
+- Segment-wise analysis and patterns
+- Actionable recommendations per risk tier
+- Professional formatted reports for stakeholders
+
+#### 4. **main.py** - Pipeline Orchestrator
+- `TelecomChurnPipeline` class for complete ML workflow
+- Unified API: load data -> train models -> analyze risk -> generate reports
+- Single-command execution of entire pipeline
+
+### Quick Start
+
+```python
+from main import TelecomChurnPipeline
+
+pipeline = TelecomChurnPipeline('TelecomCustomerChurn.csv')
+risk_df, report = pipeline.run_pipeline()
+```
+
+
+
 ## 👤 Author
 
 **Bhupendra Yadav**
